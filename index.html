@@ -114,7 +114,9 @@
     <h1>Newsletter Site</h1>
     <nav class="tabs">
         <a href="#home" class="tab active">Home</a>
-        <a href="#about" class="tab">About</a>
+        <a href="#post" class="tab active">Post</a>
+        <a href="#categories" class="tab active">Categories</a>
+        <a href="about.html" class="tab">About</a>
         <a href="#contact" class="tab">Contact</a>
     </nav>
   </header>
@@ -163,6 +165,15 @@
         messageDiv.textContent = 'Subscription failed';
       }
     });
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+          tab.classList.remove('active');
+          if (tab.href === window.location.href) {
+            tab.classList.add('active');
+          }
+        });
+      });
   </script>
 </body>
 </html>
