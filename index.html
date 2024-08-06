@@ -1,7 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter Site</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input[type="email"] {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .message {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .newsletters {
+      margin-top: 50px;
+    }
+    .newsletter {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    .newsletter h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
+    }
+    .newsletter p {
+      margin: 5px 0;
+      color: #666;
+    }
+  </style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+  <div class="container">
+    <h1>Subscribe to our Newsletter</h1>
+    <form id="subscribe-form">
+      <input type="email" id="email" placeholder="Enter your email" required>
+      <button type="submit">Subscribe</button>
+    </form>
+    <div class="message" id="message"></div>
+
+    <div class="newsletters">
+      <div class="newsletter">
+        <h2>Newsletter Title 1</h2>
+        <p>Newsletter content preview...</p>
+      </div>
+      <div class="newsletter">
+        <h2>Newsletter Title 2</h2>
+        <p>Newsletter content preview...</p>
+      </div>
+      <!-- More newsletters can be added here -->
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('subscribe-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const messageDiv = document.getElementById('message');
+
+      try {
+        const response = await fetch('http://localhost:5000/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await response.text();
+        messageDiv.textContent = data;
+      } catch (error) {
+        messageDiv.textContent = 'Subscription failed';
+      }
+    });
+  </script>
 </body>
 </html>
