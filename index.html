@@ -13,15 +13,41 @@
       color: #333;
     }
     header {
-      background-color: #1a1a1a;
-      padding: 20px 0;
-      text-align: center;
-      color: #fff;
+    background-color: #1a1a1a;
+    padding: 20px 0;
+    text-align: center;
+    color: #fff;
+    position: relative;
     }
+
     header h1 {
-      margin: 0;
-      font-size: 36px;
+    margin: 0;
+    font-size: 36px;
     }
+
+    .tabs {
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+    padding: 10px 0;
+    margin-top: 20px;
+    }
+
+    .tab {
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    }
+
+    .tab:hover {
+    background-color: #444;
+    }
+
+    .tab.active {
+    background-color: #007BFF;
+    }
+
     .container {
       max-width: 800px;
       margin: 30px auto;
@@ -86,6 +112,11 @@
 <body>
   <header>
     <h1>Newsletter Site</h1>
+    <nav class="tabs">
+        <a href="#home" class="tab active">Home</a>
+        <a href="#about" class="tab">About</a>
+        <a href="#contact" class="tab">Contact</a>
+    </nav>
   </header>
   <div class="container">
     <div class="subscribe-section">
