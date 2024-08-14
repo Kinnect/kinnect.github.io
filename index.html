@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Newsletter Site</title>
+  <title>Data Deep Dive</title>
   <style>
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -11,7 +11,16 @@
       padding: 0;
       background-color: #fafafa;
       color: #333;
+      display: flex;
     }
+    .sidebar {
+      width: 250px;
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      height: 100vh;
+      box-sizing: border-box;
+    }  
     header {
     background-color: #1a1a1a;
     padding: 20px 0;
@@ -48,9 +57,11 @@
     background-color: #007BFF;
     }
 
+    
     .container {
       max-width: 800px;
       margin: 30px auto;
+      margin-left: 250px; /* Adjust margin to account for sidebar */
       padding: 20px;
       background-color: #fff;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -111,7 +122,7 @@
 </head>
 <body>
   <header>
-    <h1>Newsletter Site</h1>
+    <h1>Newsletter</h1>
     <nav class="tabs">
         <a href="home" class="tab active">Home</a>
         <a href="posts" class="tab active">Posts</a>
@@ -120,6 +131,14 @@
         <a href="contact" class="tab">Contact</a>
     </nav>
   </header>
+  <div class="sidebar">
+    <h2>Sidebar Title</h2>
+    <ul>
+      <li><a href="#link1">Link 1</a></li>
+      <li><a href="#link2">Link 2</a></li>
+      <li><a href="#link3">Link 3</a></li>
+    </ul>
+  </div>
   <div class="container">
     <div class="subscribe-section">
       <h2>Subscribe to our Newsletter</h2>
