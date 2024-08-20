@@ -290,7 +290,6 @@
         const processedFiles = new Set();
 
         const newslettersContainer = document.querySelector('.newsletters');
-        newslettersContainer.innerHTML = ''; // Clear previous contents
 
         for (const file of markdownFiles) {
           if (processedFiles.has(file.name)) continue;
