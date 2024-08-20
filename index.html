@@ -297,21 +297,25 @@
 
           const fileResponse = await fetch(file.download_url);
           const markdownContent = await fileResponse.text();
-    
+          const formattedDate = extractDateFromMarkdown(markdownContent);
+
           const title = extractTitleFromMarkdown(markdownContent); // Extract h3 title from markdown
           const description = extractDescriptionFromMarkdown(markdownContent); // Extract first paragraph from markdown
-    
+        
           // Create a new div for each newsletter and append it to the container
           const newsletterDiv = document.createElement('div');
           newsletterDiv.className = 'newsletter';
-          newsletterDiv.innerHTML = `<h3 style="cursor: pointer;">${title}</h3><p>${description}</p>`;
-
+          newsletterDiv.innerHTML = `
+          <h3 style="cursor: pointer;">${title}</h3>
+          <h4>${formattedDate ? `Posted: ${formattedDate}` : ''}</h4>
+          <p>${description}</p>
+        `;
           // Add an event listener to display the content when the title is clicked
-          newsletterDiv.querySelector('h3').addEventListener('click', () => {
+          const h3Tag = newsletterDiv.querySelector('h3');
+          h3Tag.addEventListener('click', () => {
             const contentContainer = document.getElementById('content-container');
-            contentContainer.innerHTML = marked.parse(markdownContent); // Display the Markdown content in the container
-          });    
-
+            contentContainer.innerHTML = renderMarkdownContent(markdownContent);
+          });
           newslettersContainer.appendChild(newsletterDiv);
         }
       } catch (error) {
@@ -336,15 +340,29 @@
       return "No description available";
     }
 
+    function extractDateFromMarkdown(markdown) {
+      const dateMatch = markdown.match(/date:\s*"(.+?)"/);
+      if (dateMatch) {
+        const date = new Date(dateMatch[1]);
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+      }
+      return null;
+    }
+
+    // Function to remove the front matter from markdown content
+    function stripFrontMatter(markdown) {
+      return markdown.replace(/^---[\s\S]+?---/, '').trim();
+    }
+
     function renderMarkdownContent(markdown) {
-      // Remove the front matter (metadata section)
-      const contentWithoutFrontMatter = markdown.replace(/^---[\s\S]+?---/, '').trim();
-    
-      // Render the remaining markdown content
-      const renderedContent = marked(contentWithoutFrontMatter);
-      return renderedContent;
+      const contentWithoutFrontMatter = stripFrontMatter(markdown);
+      return marked.parse(contentWithoutFrontMatter);
     }    
-    
+
     addNewsletterBtn.addEventListener('click', () => {
       popup.style.display = 'flex';
     });
@@ -405,7 +423,7 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', fetchMarkdownFiles, async () => {
         const tabs = document.querySelectorAll('.tab');
         tabs.forEach(tab => {
           tab.classList.remove('active');
@@ -414,8 +432,7 @@
           }
         });
     });
-    
-    fetchMarkdownFiles();
+
   </script>
 </body>
 </html>

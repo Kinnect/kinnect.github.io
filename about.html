@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Newsletter Site</title>
+  <title>Data Deep Dive</title>
   <style>
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -11,70 +11,158 @@
       padding: 0;
       background-color: #fafafa;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
     }
+
+    .sidebar {
+      width: 250px;
+      background-color: #171717;
+      color: #fff;
+      padding: 20px;
+      height: 100vh;
+      box-sizing: border-box;
+      transition: width 0.3s ease;
+      position: fixed;
+      left: 0;
+      top: 0;
+    }
+
+    .sidebar.collapsed {
+      width: 60px;
+      padding: 20px 10px;
+    }
+
+    .sidebar.collapsed ul li a {
+      font-size: 0;
+    }
+
+    .sidebar.collapsed h2 {
+      font-size: 0;
+    }
+
+    .sidebar.collapsed ul {
+      display: none;
+    }
+
+    .toggle-btn {
+      top: 10px;
+      right: -25px;
+      background-color: #007BFF;
+      color: #fff;
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .add-newsletter-btn {
+      top: 10px;
+      right: -25px;
+      background-color: #007BFF;
+      color: #fff;
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+
     header {
-    background-color: #1a1a1a;
-    padding: 20px 0;
-    text-align: center;
-    color: #fff;
-    position: relative;
+      background-color: #212121;
+      padding: 20px 0;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      transition: margin-left 0.3s ease;
+      margin-left: 250px;
+    }
+
+    header.collapsed {
+      margin-left: 60px;
     }
 
     header h1 {
-    margin: 0;
-    font-size: 36px;
+      margin: 0;
+      font-size: 36px;
     }
 
     .tabs {
-    display: flex;
-    justify-content: center;
-    background-color: #333;
-    padding: 10px 0;
-    margin-top: 20px;
+      background-color: #212121;
+      padding: 10px 0;
+      transition: margin-left 0.3s ease;
+      margin-left: 250px;
+      text-align: center;
+    }
+
+    .tabs.collapsed {
+      margin-left: 60px;
     }
 
     .tab {
-    color: #fff;
-    padding: 10px 20px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
     }
 
     .tab:hover {
-    background-color: #444;
+      background-color: #444;
     }
 
     .tab.active {
-    background-color: #007BFF;
+      background-color: #007BFF;
+    }
+
+    .main-content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-grow: 1;
+      transition: margin-left 0.3s ease;
+      margin-left: 250px;
+      height: calc(100vh - 20px);
+    }
+
+    .main-content.collapsed {
+      margin-left: 60px;
     }
 
     .container {
-      max-width: 800px;
-      margin: 30px auto;
-      padding: 20px;
+      width: 100%;
+      height: 100%;
+      padding: 10px 30px;
       background-color: #fff;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
     }
+
     .subscribe-section, .newsletters {
-      margin-bottom: 40px;
+      margin-bottom: 0px;
     }
+
     .subscribe-section h2, .newsletters h2 {
       margin-bottom: 20px;
       font-size: 24px;
       border-bottom: 2px solid #ddd;
       padding-bottom: 10px;
     }
+
     form {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
+
     input[type="email"] {
       padding: 15px;
       font-size: 16px;
       border: 1px solid #ddd;
       border-radius: 4px;
     }
+
     button {
       padding: 15px;
       font-size: 16px;
@@ -85,65 +173,202 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
+
     button:hover {
       background-color: #0056b3;
     }
+
     .message {
       text-align: center;
       margin-top: 20px;
       font-size: 16px;
       color: #007BFF;
     }
+
     .newsletter {
       border-bottom: 1px solid #ddd;
       padding: 20px 0;
     }
+
     .newsletter h3 {
       margin: 0;
       font-size: 20px;
       color: #007BFF;
     }
+
     .newsletter p {
       margin: 10px 0 0;
       color: #666;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked@14.0.0/lib/marked.umd.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Newsletter Site</h1>
-    <nav class="tabs">
-        <a href="#home" class="tab active">Home</a>
-        <a href="#post" class="tab active">Post</a>
-        <a href="#categories" class="tab active">Categories</a>
-        <a href="#contact" class="tab">Contact</a>
-    </nav>
+  <header id="header">
+    <h1>Data Deep Dive</h1>
   </header>
-  <div class="container">
-    <div class="subscribe-section">
-      <h2>Subscribe to our Newsletter</h2>
-      <form id="subscribe-form">
-        <input type="email" id="email" placeholder="Enter your email" required>
-        <button type="submit">Subscribe</button>
-      </form>
-      <div class="message" id="message"></div>
+
+  <nav class="tabs" id="tabs">
+    <a href="index.html" class="tab active">Home</a>
+    <a href="posts.html" class="tab active">Posts</a>
+    <a href="categories" class="tab active">Categories</a>
+    <a href="about.html" class="tab">About</a>
+    <a href="contact" class="tab">Contact</a>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <button class="toggle-btn" id="toggle-btn">☰</button>
+    <button class="add-newsletter-btn" id="add-newsletter-btn">+</button>
+    <h2>Title</h2>
+    <ul>
+      <li><a href="#link1">Link 1</a></li>
+      <li><a href="#link2">Link 2</a></li>
+      <li><a href="#link3">Link 3</a></li>
+    </ul>
+  </div>
+
+  <div class="main-content" id="main-content">
+    <div class="container" id="content-container">
+      <div class="subscribe-section">
+        <h2>Subscribe to our Newsletter</h2>
+        <form id="subscribe-form">
+          <input type="email" id="email" placeholder="Enter your email" required>
+          <button type="submit">Subscribe</button>
+        </form>
+        <div class="message" id="message"></div>
+      </div>
+
+      <div class="newsletters">
+        <h2>Latest Posts</h2>
+        <!-- Newsletter posts will be dynamically loaded here -->
+      </div>
     </div>
-    
-    <div class="newsletters">
-      <h2>Latest Newsletters</h2>
-      <div class="newsletter">
-        <h3>Newsletter Title 1</h3>
-        <p>Newsletter content preview...</p>
+  </div>
+
+  <div id="popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center;">
+    <div style="background: #fff; padding: 20px; border-radius: 5px; width: 300px;">
+      <h3>New Post</h3>
+      <input type="text" id="newsletter-title" placeholder="Enter Title" required>
+      <input type="text" id="newsletter-date" placeholder="Enter date (MM/DD/YYYY)" required>
+      <textarea id="newsletter-content" placeholder="Enter Description" required></textarea>
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button id="close-popup">Close</button>
+        <button id="submit-newsletter">Submit</button>
       </div>
-      <div class="newsletter">
-        <h3>Newsletter Title 2</h3>
-        <p>Newsletter content preview...</p>
-      </div>
-      <!-- More newsletters can be added here -->
     </div>
   </div>
 
   <script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggle-btn');
+    const mainContent = document.getElementById('main-content');
+    const header = document.getElementById('header');
+    const tabs = document.getElementById('tabs');
+    const addNewsletterBtn = document.getElementById('add-newsletter-btn');
+    const popup = document.getElementById('popup');
+    const submitNewsletterBtn = document.getElementById('submit-newsletter');
+    const closePopupBtn = document.getElementById('close-popup');
+    const newslettersContainer = document.querySelector('.newsletters');
+    const username = 'Kinnect';
+    const repo = 'kinnect.github.io';
+    const branch = 'main';
+    const folder = '_posts';  
+    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${folder}?ref=${branch}`
+
+    async function fetchMarkdownFiles() {
+      try {
+        const response = await fetch(apiUrl);
+        const files = await response.json();
+        
+        // Filter for markdown files
+        const markdownFiles = files
+        .filter(file => file.name.endsWith('.md') || file.name.endsWith('.markdown'))
+        .sort((a, b) => new Date(b.name.split('-')[0]) - new Date(a.name.split('-')[0]))
+        .slice(0, 5); // Get the top 5 most recent files
+        
+        // Track processed files to avoid duplicates
+        const processedFiles = new Set();
+
+        const newslettersContainer = document.querySelector('.newsletters');
+
+        for (const file of markdownFiles) {
+          if (processedFiles.has(file.name)) continue;
+          processedFiles.add(file.name);
+
+          const fileResponse = await fetch(file.download_url);
+          const markdownContent = await fileResponse.text();
+    
+          const title = extractTitleFromMarkdown(markdownContent); // Extract h3 title from markdown
+          const description = extractDescriptionFromMarkdown(markdownContent); // Extract first paragraph from markdown
+    
+          // Create a new div for each newsletter and append it to the container
+          const newsletterDiv = document.createElement('div');
+          newsletterDiv.className = 'newsletter';
+          newsletterDiv.innerHTML = `<h3 style="cursor: pointer;">${title}</h3><p>${description}</p>`;
+
+          // Add an event listener to display the content when the title is clicked
+          newsletterDiv.querySelector('h3').addEventListener('click', () => {
+            const contentContainer = document.getElementById('content-container');
+            contentContainer.innerHTML = marked.parse(markdownContent); // Display the Markdown content in the container
+          });    
+
+          newslettersContainer.appendChild(newsletterDiv);
+        }
+      } catch (error) {
+        console.error('Error fetching markdown files:', error);
+      }
+    }
+
+    // Helper functions to extract content from markdown
+    function extractTitleFromMarkdown(markdown) {
+      const titleMatch = markdown.match(/^#\s+(.+)/m); // Match the first H1 tag
+      return titleMatch ? titleMatch[1] : 'Untitled';
+    }
+    
+    function extractDescriptionFromMarkdown(markdown) {
+      const descriptionMatch = markdown.match(/<meta name="description" content="([^"]+)">/);
+      return descriptionMatch ? descriptionMatch[1] : 'No description available';
+    }
+
+    addNewsletterBtn.addEventListener('click', () => {
+      popup.style.display = 'flex';
+    });
+    
+    closePopupBtn.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
+
+    submitNewsletterBtn.addEventListener('click', () => {
+      const title = document.getElementById('newsletter-title').value;
+      const content = document.getElementById('newsletter-content').value;
+      const date = document.getElementById('newsletter-date').value;
+
+      const datePattern = /^(0[1-9]|1[0-2])\/([0-2][0-9]|3[01])\/\d{4}$/;
+      if (!datePattern.test(date)) {
+        alert('Please enter a valid date in the format MM/DD/YYYY');
+        return;
+      }
+
+      if (title && content) {
+        const newsletterDiv = document.createElement('div');
+        newsletterDiv.className = 'newsletter';
+        newsletterDiv.innerHTML = `<h3>${title}</h3><p>${content}</p><p><strong>Date:</strong> ${date}</p>`;
+        newslettersContainer.appendChild(newsletterDiv);
+        
+        document.getElementById('newsletter-title').value = '';
+        document.getElementById('newsletter-date').value = '';
+        document.getElementById('newsletter-content').value = '';
+        popup.style.display = 'none';
+      }
+    });    
+
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      mainContent.classList.toggle('collapsed');
+      header.classList.toggle('collapsed');
+      tabs.classList.toggle('collapsed');
+    });
+
     document.getElementById('subscribe-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value;
@@ -164,7 +389,8 @@
         messageDiv.textContent = 'Subscription failed';
       }
     });
-    document.addEventListener('DOMContentLoaded', () => {
+
+    document.addEventListener('DOMContentLoaded', async () => {
         const tabs = document.querySelectorAll('.tab');
         tabs.forEach(tab => {
           tab.classList.remove('active');
@@ -172,7 +398,9 @@
             tab.classList.add('active');
           }
         });
-      });
+    });
+    
+    fetchMarkdownFiles();
   </script>
 </body>
 </html>
