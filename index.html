@@ -209,9 +209,9 @@
   </header>
 
   <nav class="tabs" id="tabs">
-    <a href="index.html" class="tab active">Home</a>
-    <a href="posts.html" class="tab active">Posts</a>
-    <a href="categories" class="tab active">Categories</a>
+    <a href="index.html" class="tab">Home</a>
+    <a href="posts.html" class="tab">Posts</a>
+    <a href="categories" class="tab">Categories</a>
     <a href="about.html" class="tab">About</a>
     <a href="contact" class="tab">Contact</a>
   </nav>
@@ -249,7 +249,7 @@
     <div style="background: #fff; padding: 20px; border-radius: 5px; width: 300px;">
       <h3>New Post</h3>
       <input type="text" id="newsletter-title" placeholder="Enter Title" required>
-      <input type="text" id="newsletter-date" placeholder="Enter date (MM/DD/YYYY)" required>
+      <input type="text" id="newsletter-date" placeholder="Enter date (YYYY/MM/DD)" required>
       <textarea id="newsletter-content" placeholder="Enter Description" required></textarea>
       <div style="display: flex; justify-content: space-between; margin-top: 20px;">
         <button id="close-popup">Close</button>
@@ -376,9 +376,9 @@
       const content = document.getElementById('newsletter-content').value;
       const date = document.getElementById('newsletter-date').value;
 
-      const datePattern = /^(0[1-9]|1[0-2])\/([0-2][0-9]|3[01])\/\d{4}$/;
+      const datePattern = /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/;
       if (!datePattern.test(date)) {
-        alert('Please enter a valid date in the format MM/DD/YYYY');
+        alert('Please enter a valid date in the format YYYY/MM/DD');
         return;
       }
 
