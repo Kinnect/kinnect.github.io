@@ -279,17 +279,23 @@
       try {
         const response = await fetch(apiUrl);
         const files = await response.json();
-
+        
         // Filter for markdown files
         const markdownFiles = files
         .filter(file => file.name.endsWith('.md') || file.name.endsWith('.markdown'))
         .sort((a, b) => new Date(b.name.split('-')[0]) - new Date(a.name.split('-')[0]))
         .slice(0, 5); // Get the top 5 most recent files
         
+        // Track processed files to avoid duplicates
+        const processedFiles = new Set();
+
         const newslettersContainer = document.querySelector('.newsletters');
         newslettersContainer.innerHTML = ''; // Clear previous contents
 
         for (const file of markdownFiles) {
+          if (processedFiles.has(file.name)) continue;
+          processedFiles.add(file.name);
+
           const fileResponse = await fetch(file.download_url);
           const markdownContent = await fileResponse.text();
     
@@ -324,8 +330,6 @@
       const descriptionMatch = markdown.match(/<meta name="description" content="([^"]+)">/);
       return descriptionMatch ? descriptionMatch[1] : 'No description available';
     }
-
-    fetchMarkdownFiles();
 
     addNewsletterBtn.addEventListener('click', () => {
       popup.style.display = 'flex';
@@ -388,7 +392,6 @@
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
-        await fetchMarkdownFiles();
         const tabs = document.querySelectorAll('.tab');
         tabs.forEach(tab => {
           tab.classList.remove('active');
@@ -397,6 +400,8 @@
           }
         });
     });
+    
+    fetchMarkdownFiles();
   </script>
 </body>
 </html>
