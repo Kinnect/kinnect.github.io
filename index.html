@@ -201,7 +201,7 @@
       color: #666;
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@14.0.0/lib/marked.umd.min.js"></script>
 </head>
 <body>
   <header id="header">
@@ -209,10 +209,10 @@
   </header>
 
   <nav class="tabs" id="tabs">
-    <a href="home" class="tab active">Home</a>
-    <a href="posts" class="tab active">Posts</a>
+    <a href="index.html" class="tab active">Home</a>
+    <a href="posts.html" class="tab active">Posts</a>
     <a href="categories" class="tab active">Categories</a>
-    <a href="about" class="tab">About</a>
+    <a href="about.html" class="tab">About</a>
     <a href="contact" class="tab">Contact</a>
   </nav>
 
@@ -298,7 +298,14 @@
           // Create a new div for each newsletter and append it to the container
           const newsletterDiv = document.createElement('div');
           newsletterDiv.className = 'newsletter';
-          newsletterDiv.innerHTML = `<h3>${title}</h3><p>${description}</p>`;
+          newsletterDiv.innerHTML = `<h3 style="cursor: pointer;">${title}</h3><p>${description}</p>`;
+
+          // Add an event listener to display the content when the title is clicked
+          newsletterDiv.querySelector('h3').addEventListener('click', () => {
+            const contentContainer = document.getElementById('content-container');
+            contentContainer.innerHTML = marked.parse(markdownContent); // Display the Markdown content in the container
+          });    
+
           newslettersContainer.appendChild(newsletterDiv);
         }
       } catch (error) {
@@ -379,7 +386,8 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+        await fetchMarkdownFiles();
         const tabs = document.querySelectorAll('.tab');
         tabs.forEach(tab => {
           tab.classList.remove('active');
