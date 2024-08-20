@@ -321,15 +321,30 @@
 
     // Helper functions to extract content from markdown
     function extractTitleFromMarkdown(markdown) {
-      const titleMatch = markdown.match(/^#\s+(.+)/m); // Match the first H1 tag
-      return titleMatch ? titleMatch[1] : 'Untitled';
+      const titleMatch = markdown.match(/title:\s*"(.+?)"/);
+      if (titleMatch) {
+        return titleMatch[1];
+      }
+      return "Untitled";
     }
     
     function extractDescriptionFromMarkdown(markdown) {
-      const descriptionMatch = markdown.match(/<meta name="description" content="([^"]+)">/);
-      return descriptionMatch ? descriptionMatch[1] : 'No description available';
+      const descriptionMatch = markdown.match(/description:\s*"(.+?)"/);
+      if (descriptionMatch) {
+        return descriptionMatch[1];
+      }
+      return "No description available";
     }
 
+    function renderMarkdownContent(markdown) {
+      // Remove the front matter (metadata section)
+      const contentWithoutFrontMatter = markdown.replace(/^---[\s\S]+?---/, '').trim();
+    
+      // Render the remaining markdown content
+      const renderedContent = marked(contentWithoutFrontMatter);
+      return renderedContent;
+    }    
+    
     addNewsletterBtn.addEventListener('click', () => {
       popup.style.display = 'flex';
     });
