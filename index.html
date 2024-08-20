@@ -287,6 +287,7 @@
         .slice(0, 5); // Get the top 5 most recent files
         
         const newslettersContainer = document.querySelector('.newsletters');
+        newslettersContainer.innerHTML = ''; // Clear previous contents
 
         for (const file of markdownFiles) {
           const fileResponse = await fetch(file.download_url);
