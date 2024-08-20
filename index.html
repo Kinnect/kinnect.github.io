@@ -271,56 +271,53 @@
     const newslettersContainer = document.querySelector('.newsletters');
     const username = 'Kinnect';
     const repo = 'kinnect.github.io';
-    const branch = 'main';  
-
-    async function loadMarkdown(file) {
-      try {
-        const response = await fetch(file);
-        const markdown = await response.text();
-        const htmlContent = marked.parse(markdown);
-        return htmlContent;
-      } catch (error) {
-        console.error('Error fetching markdown:', error);
-      }
-    }
+    const branch = 'main';
+    const folder = '_posts';  
+    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${folder}?ref=${branch}`
 
     async function fetchMarkdownFiles() {
       try {
-        const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents?ref=${branch}`);
+        const response = await fetch(apiUrl);
         const files = await response.json();
 
         // Filter for markdown files
         const markdownFiles = files
-          .filter(file => file.name.endsWith('.md'))
-          .sort((a, b) => new Date(b.name.split('-')[0]) - new Date(a.name.split('-')[0])) // Sort by date in filename
-          .slice(0, 5); // Get top 5
+        .filter(file => file.name.endsWith('.md') || file.name.endsWith('.markdown'))
+        .sort((a, b) => new Date(b.name.split('-')[0]) - new Date(a.name.split('-')[0]))
+        .slice(0, 5); // Get the top 5 most recent files
+        
+        const newslettersContainer = document.querySelector('.newsletters');
 
         for (const file of markdownFiles) {
-          await loadMarkdownFromGitHub(file.path);
+          const fileResponse = await fetch(file.download_url);
+          const markdownContent = await fileResponse.text();
+    
+          const title = extractTitleFromMarkdown(markdownContent); // Extract h3 title from markdown
+          const description = extractDescriptionFromMarkdown(markdownContent); // Extract first paragraph from markdown
+    
+          // Create a new div for each newsletter and append it to the container
+          const newsletterDiv = document.createElement('div');
+          newsletterDiv.className = 'newsletter';
+          newsletterDiv.innerHTML = `<h3>${title}</h3><p>${description}</p>`;
+          newslettersContainer.appendChild(newsletterDiv);
         }
       } catch (error) {
         console.error('Error fetching markdown files:', error);
       }
     }
 
-    // Function to fetch and display a single markdown file
-    async function loadMarkdownFromGitHub(filePath) {
-      try {
-        const response = await fetch(`https://raw.githubusercontent.com/${username}/${repo}/${branch}/${filePath}`);
-        const markdown = await response.text();
-        const htmlContent = marked.parse(markdown);
-
-        const newsletterDiv = document.createElement('div');
-        newsletterDiv.className = 'newsletter';
-        newsletterDiv.innerHTML = htmlContent;
-
-        newslettersContainer.appendChild(newsletterDiv);
-      } catch (error) {
-        console.error('Error loading markdown:', error);
-      }
+    // Helper functions to extract content from markdown
+    function extractTitleFromMarkdown(markdown) {
+      const titleMatch = markdown.match(/^#\s+(.+)/m); // Match the first H1 tag
+      return titleMatch ? titleMatch[1] : 'Untitled';
+    }
+    
+    function extractDescriptionFromMarkdown(markdown) {
+      const descriptionMatch = markdown.match(/<meta name="description" content="([^"]+)">/);
+      return descriptionMatch ? descriptionMatch[1] : 'No description available';
     }
 
-    document.addEventListener('DOMContentLoaded', fetchMarkdownFiles);
+    fetchMarkdownFiles();
 
     addNewsletterBtn.addEventListener('click', () => {
       popup.style.display = 'flex';
