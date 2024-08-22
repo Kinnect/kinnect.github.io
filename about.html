@@ -209,16 +209,14 @@
   </header>
 
   <nav class="tabs" id="tabs">
-    <a href="index.html" class="tab active">Home</a>
-    <a href="posts.html" class="tab active">Posts</a>
-    <a href="categories" class="tab active">Categories</a>
+    <a href="https://kinnect.github.io/" class="tab">Home</a>
+    <a href="posts.html" class="tab">Posts</a>
+    <a href="categories.html" class="tab">Categories</a>
     <a href="about.html" class="tab">About</a>
-    <a href="contact" class="tab">Contact</a>
   </nav>
 
   <div class="sidebar" id="sidebar">
     <button class="toggle-btn" id="toggle-btn">☰</button>
-    <button class="add-newsletter-btn" id="add-newsletter-btn">+</button>
     <h2>Title</h2>
     <ul>
       <li><a href="#link1">Link 1</a></li>
@@ -230,31 +228,39 @@
   <div class="main-content" id="main-content">
     <div class="container" id="content-container">
       <div class="subscribe-section">
-        <h2>Subscribe to our Newsletter</h2>
-        <form id="subscribe-form">
-          <input type="email" id="email" placeholder="Enter your email" required>
-          <button type="submit">Subscribe</button>
-        </form>
-        <div class="message" id="message"></div>
-      </div>
-
-      <div class="newsletters">
-        <h2>Latest Posts</h2>
-        <!-- Newsletter posts will be dynamically loaded here -->
-      </div>
-    </div>
-  </div>
-
-  <div id="popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center;">
-    <div style="background: #fff; padding: 20px; border-radius: 5px; width: 300px;">
-      <h3>New Post</h3>
-      <input type="text" id="newsletter-title" placeholder="Enter Title" required>
-      <input type="text" id="newsletter-date" placeholder="Enter date (MM/DD/YYYY)" required>
-      <textarea id="newsletter-content" placeholder="Enter Description" required></textarea>
-      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-        <button id="close-popup">Close</button>
-        <button id="submit-newsletter">Submit</button>
-      </div>
+        <h2>About</h2>
+        <p>
+          Hi!
+          My name is Kevin. 
+          I am a detail-oriented data analyst and storyteller. 
+          I graduated with a BS in Finincial Economics from Binghamton University in Dec 2019. 
+          After graduation, I worked as a bursar coordinator at Relay GSE for 2 1/2 years, using analytics to understand student behavior, improve billing, and enable data-driven business decision-making. 
+          In late 2022, I joined NYC HPD as a data coordinator using more analytics and leveraging business intelligence in the housing industry. 
+          I am passionate about transforming complex data into actionable insights and leveraging data to drive business outcomes.
+        </p>
+        <p>
+          I'm a lifelong learner with a deep curiosity about data.
+          I have completed more than a dozen online courses on Coursera, edX and other MOOC platforms in subjects ranging from Statistics to Machine Learning.
+        </p>
+        <p>
+          My analytical skillset includes:
+          <li>Visualization: MS Power BI, Tableau</li>
+          <li>Databases: Postgresql, MySQL, MS SQL Server</li>
+          <li>Data mining: Python, Excel</li>
+          <li>Machine learning models</li>
+        </p>
+        <p>
+          About This Site<br>
+          On this site, you will find:
+          <li>Visualizations</li>
+          <li>Reading Notes</li>
+        </p>
+        <p>
+          Contact Me<br>
+          <a href="https://www.linkedin.com/in/k-chen787/">LinkedIn</a><br>
+          <a href="https://github.com/Kinnect">Github</a><br>
+          <a href="mailto:k.chen787@gmail.com">E-mail</a>
+        </p>
     </div>
   </div>
 
@@ -269,66 +275,6 @@
     const submitNewsletterBtn = document.getElementById('submit-newsletter');
     const closePopupBtn = document.getElementById('close-popup');
     const newslettersContainer = document.querySelector('.newsletters');
-    const username = 'Kinnect';
-    const repo = 'kinnect.github.io';
-    const branch = 'main';
-    const folder = '_posts';  
-    const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${folder}?ref=${branch}`
-
-    async function fetchMarkdownFiles() {
-      try {
-        const response = await fetch(apiUrl);
-        const files = await response.json();
-        
-        // Filter for markdown files
-        const markdownFiles = files
-        .filter(file => file.name.endsWith('.md') || file.name.endsWith('.markdown'))
-        .sort((a, b) => new Date(b.name.split('-')[0]) - new Date(a.name.split('-')[0]))
-        .slice(0, 5); // Get the top 5 most recent files
-        
-        // Track processed files to avoid duplicates
-        const processedFiles = new Set();
-
-        const newslettersContainer = document.querySelector('.newsletters');
-
-        for (const file of markdownFiles) {
-          if (processedFiles.has(file.name)) continue;
-          processedFiles.add(file.name);
-
-          const fileResponse = await fetch(file.download_url);
-          const markdownContent = await fileResponse.text();
-    
-          const title = extractTitleFromMarkdown(markdownContent); // Extract h3 title from markdown
-          const description = extractDescriptionFromMarkdown(markdownContent); // Extract first paragraph from markdown
-    
-          // Create a new div for each newsletter and append it to the container
-          const newsletterDiv = document.createElement('div');
-          newsletterDiv.className = 'newsletter';
-          newsletterDiv.innerHTML = `<h3 style="cursor: pointer;">${title}</h3><p>${description}</p>`;
-
-          // Add an event listener to display the content when the title is clicked
-          newsletterDiv.querySelector('h3').addEventListener('click', () => {
-            const contentContainer = document.getElementById('content-container');
-            contentContainer.innerHTML = marked.parse(markdownContent); // Display the Markdown content in the container
-          });    
-
-          newslettersContainer.appendChild(newsletterDiv);
-        }
-      } catch (error) {
-        console.error('Error fetching markdown files:', error);
-      }
-    }
-
-    // Helper functions to extract content from markdown
-    function extractTitleFromMarkdown(markdown) {
-      const titleMatch = markdown.match(/^#\s+(.+)/m); // Match the first H1 tag
-      return titleMatch ? titleMatch[1] : 'Untitled';
-    }
-    
-    function extractDescriptionFromMarkdown(markdown) {
-      const descriptionMatch = markdown.match(/<meta name="description" content="([^"]+)">/);
-      return descriptionMatch ? descriptionMatch[1] : 'No description available';
-    }
 
     addNewsletterBtn.addEventListener('click', () => {
       popup.style.display = 'flex';
@@ -338,56 +284,11 @@
       popup.style.display = 'none';
     });
 
-    submitNewsletterBtn.addEventListener('click', () => {
-      const title = document.getElementById('newsletter-title').value;
-      const content = document.getElementById('newsletter-content').value;
-      const date = document.getElementById('newsletter-date').value;
-
-      const datePattern = /^(0[1-9]|1[0-2])\/([0-2][0-9]|3[01])\/\d{4}$/;
-      if (!datePattern.test(date)) {
-        alert('Please enter a valid date in the format MM/DD/YYYY');
-        return;
-      }
-
-      if (title && content) {
-        const newsletterDiv = document.createElement('div');
-        newsletterDiv.className = 'newsletter';
-        newsletterDiv.innerHTML = `<h3>${title}</h3><p>${content}</p><p><strong>Date:</strong> ${date}</p>`;
-        newslettersContainer.appendChild(newsletterDiv);
-        
-        document.getElementById('newsletter-title').value = '';
-        document.getElementById('newsletter-date').value = '';
-        document.getElementById('newsletter-content').value = '';
-        popup.style.display = 'none';
-      }
-    });    
-
     toggleBtn.addEventListener('click', () => {
       sidebar.classList.toggle('collapsed');
       mainContent.classList.toggle('collapsed');
       header.classList.toggle('collapsed');
       tabs.classList.toggle('collapsed');
-    });
-
-    document.getElementById('subscribe-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const messageDiv = document.getElementById('message');
-
-      try {
-        const response = await fetch('http://localhost:5000/subscribe', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
-        });
-
-        const data = await response.text();
-        messageDiv.textContent = data;
-      } catch (error) {
-        messageDiv.textContent = 'Subscription failed';
-      }
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -399,8 +300,7 @@
           }
         });
     });
-    
-    fetchMarkdownFiles();
+
   </script>
 </body>
 </html>

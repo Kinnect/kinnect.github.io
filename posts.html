@@ -209,11 +209,10 @@
   </header>
 
   <nav class="tabs" id="tabs">
-    <a href="index.html" class="tab active">Home</a>
-    <a href="posts.html" class="tab active">Posts</a>
-    <a href="categories" class="tab active">Categories</a>
+    <a href="https://kinnect.github.io/" class="tab">Home</a>
+    <a href="posts.html" class="tab">Posts</a>
+    <a href="categories.html" class="tab">Categories</a>
     <a href="about.html" class="tab">About</a>
-    <a href="contact" class="tab">Contact</a>
   </nav>
 
   <div class="sidebar" id="sidebar">
@@ -249,7 +248,7 @@
     <div style="background: #fff; padding: 20px; border-radius: 5px; width: 300px;">
       <h3>New Post</h3>
       <input type="text" id="newsletter-title" placeholder="Enter Title" required>
-      <input type="text" id="newsletter-date" placeholder="Enter date (MM/DD/YYYY)" required>
+      <input type="text" id="newsletter-date" placeholder="Enter date (YYYY/MM/DD)" required>
       <textarea id="newsletter-content" placeholder="Enter Description" required></textarea>
       <div style="display: flex; justify-content: space-between; margin-top: 20px;">
         <button id="close-popup">Close</button>
@@ -297,21 +296,25 @@
 
           const fileResponse = await fetch(file.download_url);
           const markdownContent = await fileResponse.text();
-    
+          const formattedDate = extractDateFromMarkdown(markdownContent);
+
           const title = extractTitleFromMarkdown(markdownContent); // Extract h3 title from markdown
           const description = extractDescriptionFromMarkdown(markdownContent); // Extract first paragraph from markdown
-    
+        
           // Create a new div for each newsletter and append it to the container
           const newsletterDiv = document.createElement('div');
           newsletterDiv.className = 'newsletter';
-          newsletterDiv.innerHTML = `<h3 style="cursor: pointer;">${title}</h3><p>${description}</p>`;
-
+          newsletterDiv.innerHTML = `
+          <h3 style="cursor: pointer;">${title}</h3>
+          <h4>${formattedDate ? `Posted: ${formattedDate}` : ''}</h4>
+          <p>${description}</p>
+        `;
           // Add an event listener to display the content when the title is clicked
-          newsletterDiv.querySelector('h3').addEventListener('click', () => {
+          const h3Tag = newsletterDiv.querySelector('h3');
+          h3Tag.addEventListener('click', () => {
             const contentContainer = document.getElementById('content-container');
-            contentContainer.innerHTML = marked.parse(markdownContent); // Display the Markdown content in the container
-          });    
-
+            contentContainer.innerHTML = renderMarkdownContent(markdownContent);
+          });
           newslettersContainer.appendChild(newsletterDiv);
         }
       } catch (error) {
@@ -321,14 +324,43 @@
 
     // Helper functions to extract content from markdown
     function extractTitleFromMarkdown(markdown) {
-      const titleMatch = markdown.match(/^#\s+(.+)/m); // Match the first H1 tag
-      return titleMatch ? titleMatch[1] : 'Untitled';
+      const titleMatch = markdown.match(/title:\s*"(.+?)"/);
+      if (titleMatch) {
+        return titleMatch[1];
+      }
+      return "Untitled";
     }
     
     function extractDescriptionFromMarkdown(markdown) {
-      const descriptionMatch = markdown.match(/<meta name="description" content="([^"]+)">/);
-      return descriptionMatch ? descriptionMatch[1] : 'No description available';
+      const descriptionMatch = markdown.match(/description:\s*"(.+?)"/);
+      if (descriptionMatch) {
+        return descriptionMatch[1];
+      }
+      return "No description available";
     }
+
+    function extractDateFromMarkdown(markdown) {
+      const dateMatch = markdown.match(/date:\s*"(.+?)"/);
+      if (dateMatch) {
+        const date = new Date(dateMatch[1]);
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+      }
+      return null;
+    }
+
+    // Function to remove the front matter from markdown content
+    function stripFrontMatter(markdown) {
+      return markdown.replace(/^---[\s\S]+?---/, '').trim();
+    }
+
+    function renderMarkdownContent(markdown) {
+      const contentWithoutFrontMatter = stripFrontMatter(markdown);
+      return marked.parse(contentWithoutFrontMatter);
+    }    
 
     addNewsletterBtn.addEventListener('click', () => {
       popup.style.display = 'flex';
@@ -343,9 +375,9 @@
       const content = document.getElementById('newsletter-content').value;
       const date = document.getElementById('newsletter-date').value;
 
-      const datePattern = /^(0[1-9]|1[0-2])\/([0-2][0-9]|3[01])\/\d{4}$/;
+      const datePattern = /^\d{4}\/(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])$/;
       if (!datePattern.test(date)) {
-        alert('Please enter a valid date in the format MM/DD/YYYY');
+        alert('Please enter a valid date in the format YYYY/MM/DD');
         return;
       }
 
@@ -390,7 +422,7 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', fetchMarkdownFiles, async () => {
         const tabs = document.querySelectorAll('.tab');
         tabs.forEach(tab => {
           tab.classList.remove('active');
@@ -399,8 +431,7 @@
           }
         });
     });
-    
-    fetchMarkdownFiles();
+
   </script>
 </body>
 </html>
