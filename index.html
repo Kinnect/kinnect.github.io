@@ -200,6 +200,23 @@
       margin: 10px 0 0;
       color: #666;
     }
+
+    .metadata {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+    
+    .metadata h4 {
+      margin: 10px 0;
+      font-size: 18px;
+      color: #007BFF;
+    }
+    
+    .metadata p {
+      margin: 0 0 10px;
+      color: #666;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/marked@14.0.0/lib/marked.umd.min.js"></script>
 </head>
@@ -296,11 +313,11 @@
 
           const fileResponse = await fetch(file.download_url);
           const markdownContent = await fileResponse.text();
-          const formattedDate = extractDateFromMarkdown(markdownContent);
 
           const title = extractTitleFromMarkdown(markdownContent); // Extract h3 title from markdown
           const description = extractDescriptionFromMarkdown(markdownContent); // Extract first paragraph from markdown
-        
+          const formattedDate = extractDateFromMarkdown(markdownContent);
+          
           // Create a new div for each newsletter and append it to the container
           const newsletterDiv = document.createElement('div');
           newsletterDiv.className = 'newsletter';
@@ -313,7 +330,7 @@
           const h3Tag = newsletterDiv.querySelector('h3');
           h3Tag.addEventListener('click', () => {
             const contentContainer = document.getElementById('content-container');
-            contentContainer.innerHTML = renderMarkdownContent(markdownContent);
+            contentContainer.innerHTML = renderMarkdownContentWithMetadata(markdownContent);
           });
           newslettersContainer.appendChild(newsletterDiv);
         }
@@ -361,6 +378,35 @@
       const contentWithoutFrontMatter = stripFrontMatter(markdown);
       return marked.parse(contentWithoutFrontMatter);
     }    
+
+  // New function to render markdown content with tags, categories, and updated date
+    function renderMarkdownContentWithMetadata(markdown) {
+      const contentWithoutFrontMatter = stripFrontMatter(markdown);
+      const renderedContent = marked.parse(contentWithoutFrontMatter);
+      const tags = extractTagsFromMarkdown(markdown);
+      const category = extractCategoryFromMarkdown(markdown);
+      const updated = extractDateFromMarkdown(markdown);
+
+      return `
+        ${renderedContent}
+        <div class="metadata">
+          <h4>Tags:</h4>
+          <p>${tags.join(', ')}</p>
+          <h4>Category:</h4>
+          <p>${category.join(', ')}</p>
+          <h4>Updated:</h4>
+          <p>${updated}</p>
+        </div>
+      `;
+    }
+
+    function extractCategoryFromMarkdown(markdown) {
+      const categoryMatch = markdown.match(/category:\s*\[(.+?)\]/);
+      if (categoryMatch) {
+        return categoryMatch[1].split(',').map(cat => cat.trim().replace(/"/g, ''));
+      }
+      return [];
+    }
 
     addNewsletterBtn.addEventListener('click', () => {
       popup.style.display = 'flex';
