@@ -390,15 +390,21 @@
       return `
         ${renderedContent}
         <div class="metadata">
-          <h4>Tags:</h4>
-          <p>${tags.join(', ')}</p>
-          <h4>Category:</h4>
-          <p>${category.join(', ')}</p>
-          <h4>Updated:</h4>
-          <p>${updated}</p>
+          <p><strong>Tags: </strong>${tags.join(', ')}</p>
+          <p><strong>Category: </strong>${category.join(', ')}</p>
+          <p><strong>Updated: </strong>${updated}</p>
         </div>
       `;
     }
+
+  // New helper functions to extract tags and categories from markdown
+  function extractTagsFromMarkdown(markdown) {
+    const tagsMatch = markdown.match(/tags:\s*\[(.+?)\]/);
+    if (tagsMatch) {
+      return tagsMatch[1].split(',').map(tag => tag.trim().replace(/"/g, ''));
+    }
+    return [];
+  }    
 
     function extractCategoryFromMarkdown(markdown) {
       const categoryMatch = markdown.match(/category:\s*\[(.+?)\]/);
