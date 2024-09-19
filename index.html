@@ -372,14 +372,9 @@
     // Function to remove the front matter from markdown content
     function stripFrontMatter(markdown) {
       return markdown.replace(/^---[\s\S]+?---/, '').trim();
-    }
+    } 
 
-    function renderMarkdownContent(markdown) {
-      const contentWithoutFrontMatter = stripFrontMatter(markdown);
-      return marked.parse(contentWithoutFrontMatter);
-    }    
-
-  // New function to render markdown content with tags, categories, and updated date
+    // New function to render markdown content with tags, categories, and updated date
     function renderMarkdownContentWithMetadata(markdown) {
       const contentWithoutFrontMatter = stripFrontMatter(markdown);
       const renderedContent = marked.parse(contentWithoutFrontMatter);
@@ -397,14 +392,14 @@
       `;
     }
 
-  // New helper functions to extract tags and categories from markdown
-  function extractTagsFromMarkdown(markdown) {
-    const tagsMatch = markdown.match(/tags:\s*\[(.+?)\]/);
-    if (tagsMatch) {
-      return tagsMatch[1].split(',').map(tag => tag.trim().replace(/"/g, ''));
-    }
-    return [];
-  }    
+    // New helper functions to extract tags and categories from markdown
+    function extractTagsFromMarkdown(markdown) {
+      const tagsMatch = markdown.match(/tags:\s*\[(.+?)\]/);
+      if (tagsMatch) {
+        return tagsMatch[1].split(',').map(tag => tag.trim().replace(/"/g, ''));
+      }
+      return [];
+    }    
 
     function extractCategoryFromMarkdown(markdown) {
       const categoryMatch = markdown.match(/category:\s*\[(.+?)\]/);
