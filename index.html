@@ -185,9 +185,18 @@
       color: #007BFF;
     }
 
+    .newsletters {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* Create two equal columns */
+      gap: 20px; /* Add space between the columns */
+      margin-bottom: 20px;
+    }
+
     .newsletter {
-      border-bottom: 1px solid #ddd;
-      padding: 20px 0;
+      border: px solid #ddd;
+      padding: 20px;
+      background-color: #f9f9f9;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
 
     .newsletter h3 {
@@ -199,6 +208,26 @@
     .newsletter p {
       margin: 10px 0 0;
       color: #666;
+    }
+
+    .see-more-btn-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .see-more-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    
+    .see-more-btn:hover {
+      background-color: #0056b3;
     }
 
     .metadata {
@@ -256,7 +285,12 @@
 
       <div class="newsletters">
         <h2>Latest Posts</h2>
-        <!-- Newsletter posts will be dynamically loaded here -->
+        <div class="posts-grid">
+          <!-- Newsletter posts will be dynamically loaded here -->
+        </div>
+        <div class="see-more-btn-container">
+          <a href="posts.html" class="see-more-btn">See More</a>
+        </div>
       </div>
     </div>
   </div>
@@ -333,7 +367,7 @@
           newsletterDiv.className = 'newsletter';
           newsletterDiv.innerHTML = `
           <h3 style="cursor: pointer;">${title}</h3>
-          <img src="${imageFile ? imageFile.download_url : 'default-image.jpg'}" alt="No image Loaded" style="width:100%;height:auto;">          
+          <img src="${imageFile ? imageFile.download_url : 'default-image.jpg'}" alt="No image Loaded" style="width:25%;height:auto;">          
           <h4>${formattedDate ? `Posted: ${formattedDate}` : ''}</h4>
           <p>${description}</p>
         `;
